@@ -1,0 +1,24 @@
+export function BrandText({ text }) {
+  const words = text.split(' ')
+  if (words.length <= 1) return text
+  return (
+    <>
+      {words.slice(0, -1).join(' ')} <span className="grad-text">{words[words.length - 1]}</span>
+    </>
+  )
+}
+
+export default function Brand({ brand, href = '#hero', className = '' }) {
+  return (
+    <a href={href} className={`brand ${className}`} data-cursor>
+      {brand.logoImage ? (
+        <img src={brand.logoImage} alt={brand.logoText} className="brand-img" />
+      ) : (
+        <span className="brand-mark">{brand.logoMark}</span>
+      )}
+      <span className="brand-text">
+        <BrandText text={brand.logoText} />
+      </span>
+    </a>
+  )
+}

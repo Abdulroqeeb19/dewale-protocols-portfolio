@@ -1,0 +1,140 @@
+
+> dewale-protocols-portfolio@1.0.0 dev
+> vite --port 5173
+
+
+  [32m[1mVITE[22m v5.4.21[39m  [2mready in [0m[1m941[22m[2m[0m ms[22m
+
+  [32m➜[39m  [1mLocal[22m:   [36mhttp://localhost:[1m5173[22m/[39m
+[2m  [32m➜[39m  [1mNetwork[22m[2m: use [22m[1m--host[22m[2m to expose[22m
+[2m[32m  ➜[39m[22m[2m  press [22m[1mh + enter[22m[2m to show help[22m
+[2m7:49:17 PM[22m [36m[1m[vite][22m[39m [32m.env changed, restarting server...[39m
+[2m7:49:17 PM[22m [36m[1m[vite][22m[39m server restarted.
+[2m7:50:47 PM[22m [36m[1m[vite][22m[39m [32m.env changed, restarting server...[39m
+[2m7:50:47 PM[22m [36m[1m[vite][22m[39m server restarted.
+[2m8:02:10 PM[22m [36m[1m[vite][22m[39m [32m.env changed, restarting server...[39m
+[2m8:02:10 PM[22m [36m[1m[vite][22m[39m server restarted.
+[2m6:01:24 AM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/Icon.jsx[22m
+[2m6:01:33 AM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/admin/sections.jsx[22m
+[2m6:01:33 AM[22m [36m[1m[vite][22m[39m [33mhmr invalidate [39m[2m/src/admin/sections.jsx[22m Could not Fast Refresh ("CATEGORY_OPTIONS" export is incompatible). Learn more at https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-react#consistent-components-exports
+[2m6:01:33 AM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/admin/AdminShell.jsx[22m
+[2m6:01:43 AM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/context/ContentContext.jsx, /src/admin/Login.jsx[22m
+[2m6:01:43 AM[22m [36m[1m[vite][22m[39m [33mhmr invalidate [39m[2m/src/context/ContentContext.jsx[22m Could not Fast Refresh ("useContent" export is incompatible). Learn more at https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-react#consistent-components-exports
+[2m6:01:43 AM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/App.jsx, /src/components/Hero.jsx, /src/components/Articles.jsx, /src/components/Footer.jsx, /src/components/Skills.jsx, /src/components/Navbar.jsx, /src/components/Contact.jsx, /src/components/Services.jsx, /src/components/Timeline.jsx, /src/components/About.jsx, /src/components/Portfolio.jsx, /src/admin/AdminShell.jsx, /src/admin/Login.jsx[22m
+[2m6:53:08 AM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/context/ContentContext.jsx, /src/admin/Login.jsx[22m
+[2m6:53:09 AM[22m [36m[1m[vite][22m[39m [33mhmr invalidate [39m[2m/src/context/ContentContext.jsx[22m Could not Fast Refresh ("useContent" export is incompatible). Learn more at https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-react#consistent-components-exports
+[2m6:53:09 AM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/App.jsx, /src/components/Hero.jsx, /src/components/Articles.jsx, /src/components/Footer.jsx, /src/components/Skills.jsx, /src/components/Navbar.jsx, /src/components/Contact.jsx, /src/components/Services.jsx, /src/components/Timeline.jsx, /src/components/About.jsx, /src/components/Portfolio.jsx, /src/admin/AdminShell.jsx, /src/admin/Login.jsx[22m
+[2m6:53:19 AM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/admin/sections.jsx[22m
+[2m6:53:19 AM[22m [36m[1m[vite][22m[39m [33mhmr invalidate [39m[2m/src/admin/sections.jsx[22m Could not Fast Refresh ("CATEGORY_OPTIONS" export is incompatible). Learn more at https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-react#consistent-components-exports
+[2m6:53:19 AM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/admin/AdminShell.jsx[22m
+[2m8:42:10 AM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/context/ContentContext.jsx, /src/admin/Login.jsx[22m
+[2m8:42:11 AM[22m [36m[1m[vite][22m[39m [33mhmr invalidate [39m[2m/src/context/ContentContext.jsx[22m Could not Fast Refresh ("useContent" export is incompatible). Learn more at https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-react#consistent-components-exports
+[2m8:42:11 AM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/App.jsx, /src/components/Hero.jsx, /src/components/Articles.jsx, /src/components/Footer.jsx, /src/components/Skills.jsx, /src/components/Navbar.jsx, /src/components/Contact.jsx, /src/components/Services.jsx, /src/components/Timeline.jsx, /src/components/About.jsx, /src/components/Portfolio.jsx, /src/admin/AdminShell.jsx, /src/admin/Login.jsx[22m
+[2m9:32:19 AM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/Articles.jsx[22m
+[2m9:32:36 AM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/App.jsx[22m
+[2m9:32:42 AM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/App.jsx[22m
+[2m9:33:00 AM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/admin/AdminShell.jsx[22m
+[2m9:33:19 AM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/admin/AdminShell.jsx[22m
+[2m9:33:31 AM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/admin/sections.jsx[22m
+[2m9:33:32 AM[22m [36m[1m[vite][22m[39m [33mhmr invalidate [39m[2m/src/admin/sections.jsx[22m Could not Fast Refresh (export removed)
+[2m9:33:32 AM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/admin/AdminShell.jsx[22m
+[2m9:33:54 AM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/context/ContentContext.jsx, /src/admin/Login.jsx[22m
+[2m9:33:54 AM[22m [36m[1m[vite][22m[39m [33mhmr invalidate [39m[2m/src/context/ContentContext.jsx[22m Could not Fast Refresh ("useContent" export is incompatible). Learn more at https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-react#consistent-components-exports
+[2m9:33:54 AM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/App.jsx, /src/components/Hero.jsx, /src/components/Footer.jsx, /src/components/Skills.jsx, /src/components/Navbar.jsx, /src/components/Contact.jsx, /src/components/Services.jsx, /src/components/Timeline.jsx, /src/components/About.jsx, /src/components/Portfolio.jsx, /src/admin/AdminShell.jsx, /src/admin/Login.jsx[22m
+[2m9:34:05 AM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/context/ContentContext.jsx, /src/admin/Login.jsx[22m
+[2m9:34:05 AM[22m [36m[1m[vite][22m[39m [33mhmr invalidate [39m[2m/src/context/ContentContext.jsx[22m Could not Fast Refresh ("useContent" export is incompatible). Learn more at https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-react#consistent-components-exports
+[2m9:34:05 AM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/App.jsx, /src/components/Hero.jsx, /src/components/Footer.jsx, /src/components/Skills.jsx, /src/components/Navbar.jsx, /src/components/Contact.jsx, /src/components/Services.jsx, /src/components/Timeline.jsx, /src/components/About.jsx, /src/components/Portfolio.jsx, /src/admin/AdminShell.jsx, /src/admin/Login.jsx[22m
+[2m9:36:04 AM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/styles/components.css[22m
+[2m9:36:47 AM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/styles/components.css[22m
+[2m10:10:09 AM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/About.jsx[22m
+[2m10:11:49 AM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/styles/components.css[22m
+[2m10:32:12 AM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/App.jsx[22m
+[2m10:32:24 AM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/Hero.jsx[22m
+[2m10:32:39 AM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/Hero.jsx[22m
+[2m10:32:51 AM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/context/ContentContext.jsx, /src/admin/Login.jsx[22m
+[2m10:32:51 AM[22m [36m[1m[vite][22m[39m [33mhmr invalidate [39m[2m/src/context/ContentContext.jsx[22m Could not Fast Refresh ("useContent" export is incompatible). Learn more at https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-react#consistent-components-exports
+[2m10:32:51 AM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/App.jsx, /src/components/Hero.jsx, /src/components/Footer.jsx, /src/components/Skills.jsx, /src/components/Navbar.jsx, /src/components/Contact.jsx, /src/components/Services.jsx, /src/components/Timeline.jsx, /src/components/About.jsx, /src/components/Portfolio.jsx, /src/admin/AdminShell.jsx, /src/admin/Login.jsx, /src/components/ResumeModal.jsx[22m
+[2m10:33:17 AM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/admin/fields.jsx[22m
+[2m10:33:17 AM[22m [36m[1m[vite][22m[39m [33mhmr invalidate [39m[2m/src/admin/fields.jsx[22m Could not Fast Refresh (new export)
+[2m10:33:17 AM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/admin/sections.jsx[22m
+[2m10:33:17 AM[22m [36m[1m[vite][22m[39m [33mhmr invalidate [39m[2m/src/admin/sections.jsx[22m Could not Fast Refresh ("CATEGORY_OPTIONS" export is incompatible). Learn more at https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-react#consistent-components-exports
+[2m10:33:17 AM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/admin/AdminShell.jsx[22m
+[2m10:33:46 AM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/admin/sections.jsx[22m
+[2m10:33:46 AM[22m [36m[1m[vite][22m[39m [33mhmr invalidate [39m[2m/src/admin/sections.jsx[22m Could not Fast Refresh ("CATEGORY_OPTIONS" export is incompatible). Learn more at https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-react#consistent-components-exports
+[2m10:33:46 AM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/admin/AdminShell.jsx[22m
+[2m10:34:14 AM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/admin/sections.jsx[22m
+[2m10:34:14 AM[22m [36m[1m[vite][22m[39m [33mhmr invalidate [39m[2m/src/admin/sections.jsx[22m Could not Fast Refresh ("CATEGORY_OPTIONS" export is incompatible). Learn more at https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-react#consistent-components-exports
+[2m10:34:14 AM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/admin/AdminShell.jsx[22m
+[2m10:34:38 AM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/styles/components.css[22m
+[2m10:38:08 AM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/styles/admin.css[22m
+[2m11:38:19 AM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/Contact.jsx[22m
+[2m11:38:19 AM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/Contact.jsx[22m
+[2m11:38:33 AM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/MagneticButton.jsx[22m
+[2m11:39:03 AM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/MagneticButton.jsx[22m
+[2m11:41:23 AM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/admin/AdminShell.jsx[22m
+[2m11:41:33 AM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/admin/AdminShell.jsx[22m
+[2m11:41:55 AM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/styles/admin.css[22m
+[2m11:42:05 AM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/styles/components.css[22m
+[2m11:42:52 AM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/context/ContentContext.jsx, /src/admin/Login.jsx[22m
+[2m11:42:52 AM[22m [36m[1m[vite][22m[39m [33mhmr invalidate [39m[2m/src/context/ContentContext.jsx[22m Could not Fast Refresh ("useContent" export is incompatible). Learn more at https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-react#consistent-components-exports
+[2m11:42:52 AM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/App.jsx, /src/components/Hero.jsx, /src/components/Footer.jsx, /src/components/Skills.jsx, /src/components/Navbar.jsx, /src/components/Contact.jsx, /src/components/Services.jsx, /src/components/Timeline.jsx, /src/components/About.jsx, /src/components/Portfolio.jsx, /src/admin/AdminShell.jsx, /src/admin/Login.jsx, /src/components/ResumeModal.jsx[22m
+[2m1:48:00 PM[22m [36m[1m[vite][22m[39m [32m.env.local changed, restarting server...[39m
+[2m1:48:00 PM[22m [36m[1m[vite][22m[39m server restarted.
+[2m2:35:31 PM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/context/ContentContext.jsx, /src/admin/Login.jsx[22m
+[2m2:35:31 PM[22m [36m[1m[vite][22m[39m [33mhmr invalidate [39m[2m/src/context/ContentContext.jsx[22m Could not Fast Refresh ("useContent" export is incompatible). Learn more at https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-react#consistent-components-exports
+[2m2:35:31 PM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/App.jsx, /src/components/Services.jsx, /src/components/About.jsx, /src/components/Portfolio.jsx, /src/components/Timeline.jsx, /src/components/Footer.jsx, /src/components/Skills.jsx, /src/components/Hero.jsx, /src/components/ResumeModal.jsx, /src/components/Navbar.jsx, /src/components/Contact.jsx, /src/admin/Login.jsx, /src/admin/AdminShell.jsx[22m
+[2m2:36:02 PM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/context/ContentContext.jsx, /src/admin/Login.jsx[22m
+[2m2:36:02 PM[22m [36m[1m[vite][22m[39m [33mhmr invalidate [39m[2m/src/context/ContentContext.jsx[22m Could not Fast Refresh ("useContent" export is incompatible). Learn more at https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-react#consistent-components-exports
+[2m2:36:02 PM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/App.jsx, /src/components/Services.jsx, /src/components/About.jsx, /src/components/Portfolio.jsx, /src/components/Timeline.jsx, /src/components/Footer.jsx, /src/components/Skills.jsx, /src/components/Hero.jsx, /src/components/ResumeModal.jsx, /src/components/Navbar.jsx, /src/components/Contact.jsx, /src/admin/Login.jsx, /src/admin/AdminShell.jsx[22m
+[2m2:36:39 PM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/ResumeModal.jsx[22m
+[2m2:38:12 PM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/App.jsx[22m
+[2m2:38:46 PM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/App.jsx[22m
+[2m2:39:13 PM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/Footer.jsx[22m
+[2m2:39:33 PM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/admin/sections.jsx[22m
+[2m2:39:33 PM[22m [36m[1m[vite][22m[39m [33mhmr invalidate [39m[2m/src/admin/sections.jsx[22m Could not Fast Refresh ("CATEGORY_OPTIONS" export is incompatible). Learn more at https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-react#consistent-components-exports
+[2m2:39:33 PM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/admin/AdminShell.jsx[22m
+[2m2:40:22 PM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/admin/sections.jsx[22m
+[2m2:40:23 PM[22m [36m[1m[vite][22m[39m [33mhmr invalidate [39m[2m/src/admin/sections.jsx[22m Could not Fast Refresh (new export)
+[2m2:40:23 PM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/admin/AdminShell.jsx[22m
+[2m2:41:25 PM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/admin/AdminShell.jsx[22m
+[2m3:22:49 PM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/Contact.jsx[22m
+[2m3:46:18 AM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/Contact.jsx[22m
+[2m3:46:18 AM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/Contact.jsx[22m
+[2m3:46:25 AM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/styles/components.css[22m
+[2m3:53:56 AM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/Icon.jsx[22m
+[2m3:54:06 AM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/Footer.jsx[22m
+[2m5:43:19 AM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/styles/components.css[22m
+[2m5:43:35 AM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/styles/components.css[22m
+[2m5:43:44 AM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/styles/components.css[22m
+[2m5:44:06 AM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/App.jsx[22m
+[2m3:12:21 AM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/styles/components.css[22m
+[2m3:12:45 AM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/styles/components.css[22m
+[2m3:13:13 AM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/styles/components.css[22m
+[2m3:53:59 AM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/TiltCard.jsx[22m
+[2m3:53:59 AM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/TiltCard.jsx[22m
+[2m3:54:15 AM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/About.jsx[22m
+[2m3:54:34 AM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/About.jsx[22m
+[2m3:55:17 AM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/About.jsx[22m
+[2m3:55:34 AM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/styles/components.css[22m
+[2m3:55:51 AM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/styles/components.css[22m
+[2m3:56:04 AM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/styles/components.css[22m
+[2m4:21:10 AM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/admin/Login.jsx[22m
+[2m4:22:04 AM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/Contact.jsx[22m
+[2m4:22:24 AM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/Contact.jsx[22m
+[2m4:22:40 AM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/Contact.jsx[22m
+[2m4:25:00 AM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/styles/components.css[22m
+[2m5:39:53 AM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/admin/Login.jsx[22m
+[2m5:39:53 AM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/admin/Login.jsx[22m
+[2m5:40:29 AM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/App.jsx[22m
+[2m5:40:45 AM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/App.jsx[22m
+[2m5:42:09 AM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/styles/admin.css[22m
+[2m5:42:23 AM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/admin/Login.jsx[22m
+[2m1:59:56 PM[22m [36m[1m[vite][22m[39m [32m.env changed, restarting server...[39m
+[2m2:00:16 PM[22m [36m[1m[vite][22m[39m server restarted.
+[2m4:44:00 PM[22m [36m[1m[vite][22m[39m [32mpage reload [39m[2mindex.html[22m
+[2m4:44:00 PM[22m [36m[1m[vite][22m[39m [32mpage reload [39m[2mindex.html[22m
+[2m5:45:21 PM[22m [36m[1m[vite][22m[39m [32m.env changed, restarting server...[39m
+[2m5:45:22 PM[22m [36m[1m[vite][22m[39m [32m.env changed, restarting server...[39m
+Re-optimizing dependencies because lockfile has changed
+[2m5:45:23 PM[22m [36m[1m[vite][22m[39m server restarted.
+[2m6:04:19 PM[22m [36m[1m[vite][22m[39m [32mpage reload [39m[2mindex.html[22m
