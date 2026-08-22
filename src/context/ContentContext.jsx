@@ -6,15 +6,18 @@ const ContentContext = createContext(null)
 
 function deepMerge(base, override) {
   if (override === undefined || override === null) return base
-  if (Array.isArray(base) || Array.isArray(override)) return override
-  if (typeof base === 'object' && typeof override === 'object') {
-    const out = { ...base }
-    for (const key of Object.keys(override)) {
+  if (typeof base !== 'object' || typeof override !== 'object') return override
+  if (Array.isArray(base)) {
+    if (!Array.isArray(override)) return base
+    return override.length > 0 ? override : base
+  }
+  const out = { ...base }
+  for (const key of Object.keys(override)) {
+    if (override[key] !== undefined && override[key] !== null) {
       out[key] = key in base ? deepMerge(base[key], override[key]) : override[key]
     }
-    return out
   }
-  return override
+  return out
 }
 
 export function ContentProvider({ children }) {
