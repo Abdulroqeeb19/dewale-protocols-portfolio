@@ -10,16 +10,19 @@
     {
       "source": "/(.*)",
       "headers": [
+        { "key": "Strict-Transport-Security", "value": "max-age=63072000; includeSubDomains; preload" },
         { "key": "X-Content-Type-Options", "value": "nosniff" },
         { "key": "X-Frame-Options", "value": "DENY" },
+        { "key": "X-XSS-Protection", "value": "1; mode=block" },
         { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" },
         { "key": "X-DNS-Prefetch-Control", "value": "on" },
         { "key": "Permissions-Policy", "value": "camera=(), microphone=(), geolocation=(), usb=(), payment=(), fullscreen=(), autoplay=(), interest-cohort=(), browsing-topics=()" },
         { "key": "Cross-Origin-Opener-Policy", "value": "same-origin" },
         { "key": "Cross-Origin-Resource-Policy", "value": "same-origin" },
+        { "key": "Cross-Origin-Embedder-Policy", "value": "unsafe-none" },
         {
           "key": "Content-Security-Policy",
-          "value": "default-src 'self'; img-src 'self' data: blob: https://ndiketbifogahltrvsyi.supabase.co https://*.googlesyndication.com https://*.googleadservices.com https://*.doubleclick.net https://*.gstatic.com https://*.googleusercontent.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://*.googlesyndication.com; font-src 'self' data: https://fonts.gstatic.com; script-src 'self' https://pagead2.googlesyndication.com https://*.googlesyndication.com https://*.doubleclick.net; connect-src 'self' https://ndiketbifogahltrvsyi.supabase.co https://*.googlesyndication.com https://*.google-analytics.com https://*.doubleclick.net https://*.googleadservices.com; object-src 'none'; frame-src https://*.googlesyndication.com https://*.doubleclick.net https://*.googleadservices.com; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests"
+          "value": "default-src 'self'; img-src 'self' data: blob: https://ndiketbifogahltrvsyi.supabase.co https://*.googlesyndication.com https://*.googleadservices.com https://*.doubleclick.net https://*.gstatic.com https://*.googleusercontent.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://*.googlesyndication.com; font-src 'self' data: https://fonts.gstatic.com; script-src 'self' 'unsafe-inline' https://pagead2.googlesyndication.com https://*.googlesyndication.com https://*.doubleclick.net; connect-src 'self' https://ndiketbifogahltrvsyi.supabase.co https://*.googlesyndication.com https://*.google-analytics.com https://*.doubleclick.net https://*.googleadservices.com; object-src 'none'; frame-src https://*.googlesyndication.com https://*.doubleclick.net https://*.googleadservices.com; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests"
         }
       ]
     },
@@ -33,6 +36,12 @@
       "source": "/favicon.svg",
       "headers": [
         { "key": "Cache-Control", "value": "public, max-age=86400" }
+      ]
+    },
+    {
+      "source": "/(.*)",
+      "headers": [
+        { "key": "X-Permitted-Cross-Domain-Policies", "value": "none" }
       ]
     }
   ]

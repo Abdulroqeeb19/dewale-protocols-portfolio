@@ -1,5 +1,7 @@
 Contact: mailto:dewaleprotocols@gmail.com
-Expires: 2027-08-20T00:00:00.000Z
+Contact: https://x.com/itzsevenera
+Expires: 2027-12-31T23:59:59.000Z
 Preferred-Languages: en
 Canonical: https://dewale-protocols-portfolio.vercel.app/.well-known/security.txt
 Policy: https://dewale-protocols-portfolio.vercel.app/
+Acknowledgments: https://x.com/itzsevenera
