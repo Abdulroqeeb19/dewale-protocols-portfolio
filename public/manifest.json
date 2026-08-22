@@ -1,0 +1,16 @@
+{
+  "name": "Dewale Protocols — AI Automation & Full Stack Systems Engineer",
+  "short_name": "Dewale Protocols",
+  "description": "AI Automation and Full Stack Systems Engineer building intelligent systems, autonomous workflows, and production-grade platforms.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0b0c10",
+  "theme_color": "#0b0c10",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ]
+}

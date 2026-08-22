@@ -121,7 +121,7 @@ export default function Contact() {
           </div>
 
           <Reveal delay={0.15}>
-            <form className="contact-form glass" onSubmit={handleSubmit}>
+            <form className="contact-form glass" onSubmit={handleSubmit} aria-label="Contact form">
               <input
                 ref={honeypotRef}
                 type="text"

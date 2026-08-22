@@ -1683,3 +1683,198 @@
   width: 100%;
   min-height: 90px;
 }
+
+.testimonials-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 22px;
+}
+
+.testimonial-card {
+  padding: 34px;
+  border-radius: var(--radius);
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.testimonial-stars {
+  display: flex;
+  gap: 4px;
+}
+
+.star-filled {
+  color: #fca311;
+}
+
+.star-empty {
+  color: var(--text-dim);
+  opacity: 0.3;
+}
+
+.testimonial-text {
+  font-size: 1rem;
+  line-height: 1.7;
+  color: var(--text);
+  flex: 1;
+}
+
+.testimonial-author {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.testimonial-avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--accent-grad);
+  display: grid;
+  place-items: center;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1.1rem;
+  color: #071013;
+  flex-shrink: 0;
+}
+
+.testimonial-name {
+  display: block;
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.testimonial-role {
+  display: block;
+  font-size: 0.82rem;
+}
+
+.sticky-cta {
+  display: none;
+}
+
+@media (max-width: 1024px) {
+  .testimonials-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 620px) {
+  .testimonials-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .sticky-cta {
+    display: flex;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 90;
+    padding: 14px 20px;
+    background: rgba(11, 12, 16, 0.97);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-top: 1px solid var(--line);
+    justify-content: center;
+    gap: 12px;
+  }
+
+  .sticky-cta a {
+    flex: 1;
+    max-width: 280px;
+  }
+
+  .footer {
+    padding-bottom: 80px;
+  }
+}
+
+@media (min-width: 621px) {
+  .sticky-cta {
+    display: none !important;
+  }
+}
+
+.process-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+}
+
+.process-card {
+  position: relative;
+  padding: 34px;
+  border-radius: var(--radius);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.process-num {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 2.4rem;
+  background: var(--accent-grad);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  opacity: 0.3;
+  position: absolute;
+  top: 20px;
+  right: 24px;
+}
+
+.process-icon {
+  display: grid;
+  place-items: center;
+  width: 50px;
+  height: 50px;
+  border-radius: 14px;
+  background: rgba(102, 252, 241, 0.1);
+  border: 1px solid rgba(102, 252, 241, 0.3);
+  color: var(--accent);
+}
+
+.process-card h3 {
+  font-size: 1.2rem;
+}
+
+.process-card p {
+  font-size: 0.92rem;
+}
+
+.process-arrow {
+  display: none;
+}
+
+@media (min-width: 1025px) {
+  .process-arrow {
+    display: block;
+    position: absolute;
+    right: -16px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 1.5rem;
+    color: var(--accent);
+    opacity: 0.5;
+    z-index: 2;
+  }
+
+  .process-card:last-child .process-arrow {
+    display: none;
+  }
+}
+
+@media (max-width: 1024px) {
+  .process-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 620px) {
+  .process-grid {
+    grid-template-columns: 1fr;
+  }
+}

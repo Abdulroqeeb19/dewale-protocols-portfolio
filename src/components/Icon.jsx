@@ -295,6 +295,18 @@ export default function Icon({ name, size = 24, strokeWidth = 1.6, className = '
           <path d="M18 16.5h.01" />
         </svg>
       )
+    case 'star':
+      return (
+        <svg {...common} fill="currentColor" stroke="none">
+          <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+        </svg>
+      )
+    case 'starOutline':
+      return (
+        <svg {...common}>
+          <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+        </svg>
+      )
     default:
       return null
   }

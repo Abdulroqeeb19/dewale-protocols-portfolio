@@ -138,3 +138,7 @@
 Re-optimizing dependencies because lockfile has changed
 [2m5:45:23 PM[22m [36m[1m[vite][22m[39m server restarted.
 [2m6:04:19 PM[22m [36m[1m[vite][22m[39m [32mpage reload [39m[2mindex.html[22m
+[2m7:13:36 AM[22m [36m[1m[vite][22m[39m [32mpage reload [39m[2mindex.html[22m
+[2m7:14:19 AM[22m [36m[1m[vite][22m[39m [32mvite.config.js changed, restarting server...[39m
+[2m7:14:20 AM[22m [36m[1m[vite][22m[39m [32mvite.config.js changed, restarting server...[39m
+[2m7:14:22 AM[22m [36m[1m[vite][22m[39m server restarted.

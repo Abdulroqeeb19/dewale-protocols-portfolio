@@ -31,6 +31,7 @@ export default function Navbar() {
         initial={{ y: -80, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1], delay: 0.2 }}
+        role="banner"
       >
         <div className="navbar-inner container">
           <Brand brand={brand} href="#hero" />

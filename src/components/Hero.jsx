@@ -92,6 +92,9 @@ export default function Hero({ onOpenResume }) {
           <MagneticButton className="btn-primary" onClick={handleExploreWork}>
             Explore Work <Icon name="arrow" size={18} />
           </MagneticButton>
+          <a href="#contact" className="btn btn-ghost" data-cursor>
+            <Icon name="mail" size={18} /> Let&apos;s Talk
+          </a>
           <MagneticButton className="btn-ghost" onClick={handleDownloadCv}>
             <Icon name="download" size={18} /> Download CV
           </MagneticButton>

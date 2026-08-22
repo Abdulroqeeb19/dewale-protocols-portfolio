@@ -55,7 +55,7 @@ export default function Portfolio() {
                   style={project.image ? undefined : { background: project.grad }}
                 >
                   {project.image ? (
-                    <img src={project.image} alt={project.title} className="project-img" />
+                    <img src={project.image} alt={project.title} className="project-img" loading="lazy" decoding="async" />
                   ) : (
                     <span className="project-initials">{project.title.slice(0, 2).toUpperCase()}</span>
                   )}
@@ -63,12 +63,16 @@ export default function Portfolio() {
                   <div className="project-overlay">
                     <p className="project-desc">{project.desc}</p>
                     <div className="project-actions">
-                      <button className="project-btn" aria-label="Quick view" onClick={() => alert(`Quick view: ${project.title}`)}>
-                        <Icon name="eye" size={18} />
-                      </button>
-                      <button className="project-btn" aria-label="Open project" onClick={() => alert(`Open: ${project.title}`)}>
-                        <Icon name="external" size={18} />
-                      </button>
+                      {project.link && (
+                        <a href={project.link} target="_blank" rel="noopener noreferrer" className="project-btn" aria-label={`Open ${project.title}`}>
+                          <Icon name="external" size={18} />
+                        </a>
+                      )}
+                      {project.caseStudy && (
+                        <a href={project.caseStudy} className="project-btn" aria-label={`Case study for ${project.title}`}>
+                          <Icon name="eye" size={18} />
+                        </a>
+                      )}
                     </div>
                   </div>
                 </div>

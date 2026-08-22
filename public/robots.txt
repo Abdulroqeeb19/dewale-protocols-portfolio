@@ -1,5 +1,15 @@
 User-Agent: *
 Allow: /
 Disallow: /api/
+Disallow: /#/admin
 
 Sitemap: https://dewale-protocols-portfolio.vercel.app/sitemap.xml
+
+User-Agent: GPTBot
+Allow: /
+
+User-Agent: ChatGPT-User
+Allow: /
+
+User-Agent: Google-Extended
+Allow: /

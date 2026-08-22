@@ -10,11 +10,14 @@ import Timeline from './components/Timeline'
 import Portfolio from './components/Portfolio'
 import Contact from './components/Contact'
 import Footer from './components/Footer'
+import Testimonials from './components/Testimonials'
+import Process from './components/Process'
 import ResumeModal from './components/ResumeModal'
 import { supabase, supabaseConfigured } from './lib/supabase'
 import { ContentProvider, useContent } from './context/ContentContext'
 import PasswordReset from './admin/PasswordReset'
 import AdSlot from './components/AdSlot'
+import Icon from './components/Icon'
 import { AD_SLOTS } from './config/ads'
 
 const AdminApp = lazy(() => import('./admin/AdminApp'))
@@ -38,18 +41,19 @@ function LoadingScreen() {
 }
 
 function PublicSite() {
-  const { status } = useContent()
+  const { status, content } = useContent()
   const [resumeOpen, setResumeOpen] = useState(false)
 
   if (status === 'loading') return <LoadingScreen />
 
   return (
     <>
+      <a href="#main-content" className="skip-link">Skip to main content</a>
       <Cursor />
       <Favicon />
       <div id="site-content">
         <Navbar />
-        <main>
+        <main id="main-content">
           <Hero onOpenResume={() => setResumeOpen(true)} />
           <AdSlot slot={AD_SLOTS.primary} className="ad-slot-primary" />
           <About />
@@ -57,12 +61,23 @@ function PublicSite() {
           <Skills />
           <Timeline />
           <Portfolio />
+          <Process />
+          <Testimonials />
           <AdSlot slot={AD_SLOTS.secondary} className="ad-slot-secondary" />
           <Contact />
         </main>
         <Footer />
       </div>
       {resumeOpen && <ResumeModal onClose={() => setResumeOpen(false)} />}
+
+      <div className="sticky-cta" aria-hidden="true">
+        <a href="#contact" className="btn btn-primary">
+          <Icon name="mail" size={18} /> Hire Me
+        </a>
+        <a href={`tel:${content?.profile?.phone?.replace(/\s/g, '') || ''}`} className="btn btn-ghost">
+          <Icon name="phone" size={18} /> Call
+        </a>
+      </div>
     </>
   )
 }

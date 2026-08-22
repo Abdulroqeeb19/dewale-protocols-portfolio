@@ -10,7 +10,7 @@ function Portrait({ portraitImage }) {
     <div className="about-portrait">
       <TiltCard max={7} className="about-portrait-card glass">
         {portraitImage ? (
-          <img src={portraitImage} alt="Portrait" className="portrait-img" />
+          <img src={portraitImage} alt="Abdulroqeeb Olapade — Dewale Protocols" className="portrait-img" loading="lazy" decoding="async" />
         ) : (
           <>
             <div className="portrait-glow" />
@@ -95,7 +95,7 @@ export default function About() {
               Trusted by 30+ clients across fintech, logistics & SaaS · 356 projects delivered.
             </span>
           </div>
-          <MagneticButton className="btn-primary callout-btn">
+          <MagneticButton className="btn-primary callout-btn" onClick={() => document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' })}>
             Hire Me <Icon name="arrow" size={18} />
           </MagneticButton>
         </Reveal>

@@ -26,10 +26,9 @@ export const defaultContent = {
     bioSecondary:
       "Over the last decade I've helped startups and scale-ups automate the boring parts, ship resilient full stack products, and turn scattered data into decision engines. My work lives at the intersection of systems thinking and product taste.",
     socials: [
-      { label: 'GitHub', href: 'https://github.com' },
-      { label: 'LinkedIn', href: 'https://linkedin.com' },
-      { label: 'X / Twitter', href: 'https://x.com' },
-      { label: 'Dribbble', href: 'https://dribbble.com' },
+      { label: 'GitHub', href: 'https://github.com/Abdulroqeeb19' },
+      { label: 'LinkedIn', href: 'https://www.linkedin.com/in/abdulroqeeb-olapade-4b232916b/' },
+      { label: 'X / Twitter', href: 'https://x.com/itzsevenera' },
     ],
   },
   navLinks: [
@@ -38,6 +37,7 @@ export const defaultContent = {
     { label: 'Skills', href: '#skills' },
     { label: 'Experience', href: '#experience' },
     { label: 'Work', href: '#work' },
+    { label: 'Process', href: '#process' },
     { label: 'Contact', href: '#contact' },
   ],
   stats: [
@@ -206,6 +206,26 @@ export const defaultContent = {
       image: null,
       grad: 'linear-gradient(135deg, #1f8a70 0%, #0e4b3a 100%)',
       desc: 'Connected systems integrating APIs, databases, payment services, WhatsApp, Telegram, webhooks, and third party platforms.',
+    },
+  ],
+  testimonials: [
+    {
+      name: 'Adewale Adeniyi',
+      role: 'CEO, Nova Foundry',
+      rating: 5,
+      text: 'Dewale transformed our internal operations with an AI automation pipeline that cut manual work by 60%. His systems thinking and delivery speed are unmatched.',
+    },
+    {
+      name: 'Chidinma Eze',
+      role: 'Founder, ShopNaija',
+      rating: 5,
+      text: 'Our e-commerce platform went from concept to production in 8 weeks. The payment integration and inventory system just works — zero downtime since launch.',
+    },
+    {
+      name: 'Tunde Bakare',
+      role: 'CTO, EduTrack',
+      rating: 5,
+      text: 'The smart campus solution Dewale built handles 3,000+ students daily. Attendance, access control, dashboards — all connected and reliable.',
     },
   ],
   contactChannels: [

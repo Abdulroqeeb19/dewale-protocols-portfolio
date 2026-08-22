@@ -8,7 +8,7 @@ export default function Footer() {
   const year = new Date().getFullYear()
 
   return (
-    <footer className="footer">
+    <footer className="footer" role="contentinfo">
       <div className="container footer-inner">
         <Brand brand={brand} href="#hero" />
 
@@ -17,7 +17,7 @@ export default function Footer() {
         </p>
 
         <div className="footer-actions">
-          <a href={profile.email} className="footer-mail" data-cursor>
+          <a href={`mailto:${profile.email}`} className="footer-mail" data-cursor>
             {profile.email} <Icon name="arrowUpRight" size={16} />
           </a>
           {footer.showAdmin && (
