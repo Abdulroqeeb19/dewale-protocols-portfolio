@@ -55,7 +55,15 @@ export default function Portfolio() {
                   style={project.image ? undefined : { background: project.grad }}
                 >
                   {project.image ? (
-                    <img src={project.image} alt={project.title} className="project-img" loading="lazy" decoding="async" />
+                    <img
+                      src={`${project.image}${project.image.includes('?') ? '&' : '?'}width=600&quality=80&resize=cover`}
+                      alt={project.title}
+                      className="project-img"
+                      width="600"
+                      height="400"
+                      loading="lazy"
+                      decoding="async"
+                    />
                   ) : (
                     <span className="project-initials">{project.title.slice(0, 2).toUpperCase()}</span>
                   )}

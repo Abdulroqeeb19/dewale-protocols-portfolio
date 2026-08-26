@@ -5,12 +5,28 @@ import { Reveal, RevealText, SectionHeading } from './Reveal'
 import MagneticButton from './MagneticButton'
 import Icon from './Icon'
 
+function getResizedImageUrl(url, width) {
+  if (!url || !url.includes('supabase')) return url
+  const separator = url.includes('?') ? '&' : '?'
+  return `${url}${separator}width=${width}&quality=80&resize=cover`
+}
+
 function Portrait({ portraitImage }) {
   return (
     <div className="about-portrait">
       <TiltCard max={7} className="about-portrait-card glass">
         {portraitImage ? (
-          <img src={portraitImage} alt="Abdulroqeeb Olapade — Dewale Protocols" className="portrait-img" loading="lazy" decoding="async" />
+          <img
+            src={getResizedImageUrl(portraitImage, 400)}
+            srcSet={`${getResizedImageUrl(portraitImage, 320)} 320w, ${getResizedImageUrl(portraitImage, 400)} 400w, ${getResizedImageUrl(portraitImage, 600)} 600w`}
+            sizes="(max-width: 620px) 100vw, (max-width: 860px) 50vw, 400px"
+            alt="Abdulroqeeb Olapade — Dewale Protocols"
+            className="portrait-img"
+            width="400"
+            height="500"
+            loading="lazy"
+            decoding="async"
+          />
         ) : (
           <>
             <div className="portrait-glow" />

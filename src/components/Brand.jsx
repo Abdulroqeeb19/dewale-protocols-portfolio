@@ -9,10 +9,14 @@ export function BrandText({ text }) {
 }
 
 export default function Brand({ brand, href = '#hero', className = '' }) {
+  const logoUrl = brand.logoImage
+    ? `${brand.logoImage}${brand.logoImage.includes('?') ? '&' : '?'}width=80&quality=80`
+    : null
+
   return (
     <a href={href} className={`brand ${className}`} data-cursor>
-      {brand.logoImage ? (
-        <img src={brand.logoImage} alt={brand.logoText} className="brand-img" width="40" height="40" decoding="async" loading="eager" />
+      {logoUrl ? (
+        <img src={logoUrl} alt={brand.logoText} className="brand-img" width="40" height="40" decoding="async" loading="eager" />
       ) : (
         <span className="brand-mark">{brand.logoMark}</span>
       )}
