@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { useContent } from '../context/ContentContext'
 import MessagesView from './Messages'
 import Icon from '../components/Icon'
+import EnquiriesView from './Enquiries'
 import {
   SettingsEditor,
   BrandEditor,
@@ -25,6 +26,7 @@ const TABS = [
   { id: 'experience', label: 'Experience', icon: 'briefcase', Editor: ExperienceEditor },
   { id: 'portfolio', label: 'Catalogue', icon: 'layout', Editor: PortfolioEditor },
   { id: 'messages', label: 'Messages', icon: 'mail', Editor: null },
+  { id: 'enquiries', label: 'Enquiries', icon: 'spark', Editor: null },
 ]
 
 function EditorShell({ editor, draft, patch }) {
@@ -123,6 +125,8 @@ export default function AdminShell({ onLogout }) {
         {saveError && <p className="admin-error admin-error-bar">{saveError}</p>}
         {activeTab.id === 'messages' ? (
           <MessagesView />
+        ) : activeTab.id === 'enquiries' ? (
+          <EnquiriesView />
         ) : (
           <EditorShell editor={activeTab.Editor} draft={draft} patch={patch} />
         )}

@@ -5,6 +5,7 @@ import { Analytics } from '@vercel/analytics/react'
 import './styles/global.css'
 import './styles/components.css'
 import './styles/admin.css'
+import './styles/admin-enquiries.css'
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>

@@ -13,6 +13,7 @@ import Footer from './components/Footer'
 import Testimonials from './components/Testimonials'
 import Process from './components/Process'
 import ResumeModal from './components/ResumeModal'
+import WhatsAppAgent from './components/WhatsAppAgent'
 import { supabase, supabaseConfigured } from './lib/supabase'
 import { ContentProvider, useContent } from './context/ContentContext'
 import PasswordReset from './admin/PasswordReset'
@@ -69,6 +70,7 @@ function PublicSite() {
         <Footer />
       </div>
       {resumeOpen && <ResumeModal onClose={() => setResumeOpen(false)} />}
+      <WhatsAppAgent />
 
       <div className="sticky-cta" aria-hidden="true">
         <a href="#contact" className="btn btn-primary">
