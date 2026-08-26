@@ -12,7 +12,7 @@ export default function Brand({ brand, href = '#hero', className = '' }) {
   return (
     <a href={href} className={`brand ${className}`} data-cursor>
       {brand.logoImage ? (
-        <img src={brand.logoImage} alt={brand.logoText} className="brand-img" />
+        <img src={brand.logoImage} alt={brand.logoText} className="brand-img" width="40" height="40" decoding="async" loading="eager" />
       ) : (
         <span className="brand-mark">{brand.logoMark}</span>
       )}

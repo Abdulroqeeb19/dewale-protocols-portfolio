@@ -330,6 +330,12 @@ export default function WhatsAppAgent() {
 
       if (dbError) throw dbError
 
+      fetch('/api/notify-enquiry', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ...payload, source: 'web' }),
+      }).catch(() => {})
+
       setComplete(true)
       addBotMessage(
         `🎉 **Enquiry Submitted Successfully!**

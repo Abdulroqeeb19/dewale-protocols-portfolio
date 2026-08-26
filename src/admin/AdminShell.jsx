@@ -3,6 +3,7 @@ import { useContent } from '../context/ContentContext'
 import MessagesView from './Messages'
 import Icon from '../components/Icon'
 import EnquiriesView from './Enquiries'
+import WhatsAppInbox from './WhatsAppInbox'
 import {
   SettingsEditor,
   BrandEditor,
@@ -27,6 +28,7 @@ const TABS = [
   { id: 'portfolio', label: 'Catalogue', icon: 'layout', Editor: PortfolioEditor },
   { id: 'messages', label: 'Messages', icon: 'mail', Editor: null },
   { id: 'enquiries', label: 'Enquiries', icon: 'spark', Editor: null },
+  { id: 'whatsapp', label: 'WhatsApp', icon: 'phone', Editor: null },
 ]
 
 function EditorShell({ editor, draft, patch }) {
@@ -127,6 +129,8 @@ export default function AdminShell({ onLogout }) {
           <MessagesView />
         ) : activeTab.id === 'enquiries' ? (
           <EnquiriesView />
+        ) : activeTab.id === 'whatsapp' ? (
+          <WhatsAppInbox />
         ) : (
           <EditorShell editor={activeTab.Editor} draft={draft} patch={patch} />
         )}
