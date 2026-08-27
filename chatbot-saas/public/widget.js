@@ -1,13 +1,30 @@
-/* ChatBot Pro — Embeddable Widget */
+/* ChatBot Pro — Embeddable Widget v2 (Hardened) */
 (function() {
+  'use strict';
   const SCRIPT = document.currentScript;
   const BUSINESS_ID = SCRIPT?.getAttribute('data-business-id') || '';
+
+  if (!BUSINESS_ID || BUSINESS_ID.length > 100 || !/^[a-zA-Z0-9\-]+$/.test(BUSINESS_ID)) {
+    console.warn('ChatBot Pro: invalid business-id');
+    return;
+  }
 
   let chatOpen = false;
   let messages = [];
   let flowState = 'greeting';
   let collected = {};
   let businessConfig = null;
+  let submitTimestamp = 0;
+
+  function escapeHtml(str) {
+    const div = document.createElement('div');
+    div.textContent = str;
+    return div.innerHTML;
+  }
+
+  function sanitize(str) {
+    return escapeHtml(String(str || '')).slice(0, 2000);
+  }
 
   function init() {
     loadConfig().then(() => {
@@ -259,22 +276,26 @@
   }
 
   async function submitLead() {
-    const cfg = getConfig();
-    addBotMessage(`Thank you, ${collected.name}! Your enquiry has been submitted. We'll get back to you at ${collected.email} within 24 hours.`);
+    if (Date.now() - submitTimestamp < 3000) return;
+    submitTimestamp = Date.now();
+
+    const name = sanitize(collected.name);
+    const email = sanitize(collected.email);
+    const phone = sanitize(collected.phone);
+    const service = sanitize(collected.service || '');
+    const message = sanitize(collected.message || '');
+
+    if (!name || name.length < 2) { addBotMessage('Please enter a valid name.'); return; }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { addBotMessage('Please enter a valid email.'); return; }
+
+    addBotMessage(`Thank you, ${name}! Your enquiry has been submitted. We'll get back to you at ${email} within 24 hours.`);
 
     try {
       const API = SCRIPT.src.replace('/widget.js', '');
       await fetch(`${API}/api/leads`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          businessId: BUSINESS_ID,
-          name: collected.name,
-          email: collected.email,
-          phone: collected.phone,
-          service: collected.service || '',
-          message: collected.message || '',
-        }),
+        body: JSON.stringify({ businessId: BUSINESS_ID, name, email, phone, service, message }),
       });
     } catch(e) { console.error('Lead submit failed', e); }
 

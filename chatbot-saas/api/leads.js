@@ -1,41 +1,78 @@
-export default async function handler(req, res) {
-  if (req.method !== 'POST') return res.status(405).json({ ok: false })
+import { checkRateLimit, isAllowedOrigin, sanitizeInput, validateEmail, getClientIp, createErrorResponse } from '../lib/security.js'
+import { getSupabase } from '../lib/db.js'
 
-  const { businessId, name, email, phone, service, message } = req.body
-  if (!businessId || !name || !email) {
-    return res.status(422).json({ ok: false, reason: 'missing-fields' })
+export default async function handler(req, res) {
+  res.setHeader('X-Content-Type-Options', 'nosniff')
+  res.setHeader('X-Frame-Options', 'DENY')
+
+  if (req.method !== 'POST') return createErrorResponse(res, 405, 'method-not-allowed')
+
+  const ip = getClientIp(req)
+  if (!checkRateLimit(ip, 5, 60000)) return createErrorResponse(res, 429, 'rate-limited')
+
+  const origin = req.headers.origin
+  if (!isAllowedOrigin(origin)) return createErrorResponse(res, 403, 'forbidden-origin')
+
+  let body
+  try {
+    const cl = Number(req.headers['content-length'] || 0)
+    if (cl > 32 * 1024) return createErrorResponse(res, 413, 'payload-too-large')
+    body = await req.json()
+  } catch {
+    return createErrorResponse(res, 400, 'bad-request')
   }
 
+  const businessId = sanitizeInput(body.businessId, 100)
+  const name = sanitizeInput(body.name, 160)
+  const email = sanitizeInput(body.email, 254)
+  const phone = sanitizeInput(body.phone, 30)
+  const service = sanitizeInput(body.service, 200)
+  const message = sanitizeInput(body.message, 2000)
+
+  if (!businessId || !name || !email) return createErrorResponse(res, 422, 'missing-required-fields')
+  if (!validateEmail(email)) return createErrorResponse(res, 422, 'invalid-email')
+  if (name.length < 2) return createErrorResponse(res, 422, 'name-too-short')
+
+  const spamPatterns = [/viagra/i, /casino/i, /crypto.*profit/i, /click.*here/i, /free.*money/i, /bit\.ly/i]
+  if (spamPatterns.some(p => p.test(message) || p.test(name))) {
+    return createErrorResponse(res, 422, 'spam-detected')
+  }
+
+  const db = getSupabase()
+  if (!db) return createErrorResponse(res, 503, 'service-unavailable')
+
   try {
-    const url = process.env.SUPABASE_URL
-    const key = process.env.SUPABASE_SERVICE_ROLE_KEY
-    if (!url || !key) return res.status(500).json({ ok: false, reason: 'not-configured' })
-
-    const { createClient } = await import('@supabase/supabase-js')
-    const supabase = createClient(url, key)
-
-    const { data: business } = await supabase
+    const { data: business, error: bizErr } = await db
       .from('businesses')
       .select('id, name, email')
       .or(`slug.eq.${businessId},id.eq.${businessId}`)
       .single()
 
-    if (!business) return res.status(404).json({ ok: false, reason: 'business-not-found' })
+    if (bizErr || !business) return createErrorResponse(res, 404, 'business-not-found')
 
-    await supabase.from('leads').insert([{
+    const { error: leadErr } = await db.from('leads').insert([{
       business_id: business.id,
-      name, email, phone: phone || '', service: service || '', message: message || '',
+      name, email, phone, service, message,
+      source: 'chatbot',
+      ip_address: ip.slice(0, 45),
+      user_agent: sanitizeInput(req.headers['user-agent'] || '', 200),
     }])
+
+    if (leadErr) {
+      console.error('Lead insert error:', leadErr)
+      return createErrorResponse(res, 500, 'database-error')
+    }
 
     const apiKey = process.env.RESEND_API_KEY
     const notifyEmail = business.email || process.env.NOTIFY_EMAIL
-    if (apiKey && notifyEmail) {
-      await fetch('https://api.resend.com/emails', {
+    if (apiKey && notifyEmail && validateEmail(notifyEmail)) {
+      fetch('https://api.resend.com/emails', {
         method: 'POST',
         headers: { Authorization: `Bearer ${apiKey}`, 'Content-Type': 'application/json' },
         body: JSON.stringify({
           from: process.env.RESEND_FROM || 'ChatBot Pro <onboarding@resend.dev>',
           to: [notifyEmail],
+          replyTo: email,
           subject: `New lead: ${name} — ${service || 'General enquiry'}`.slice(0, 150),
           html: `<div style="font-family:Arial,sans-serif;max-width:500px;margin:0 auto;padding:24px;background:#f5f6f8;border-radius:12px">
             <div style="background:#6366f1;color:#fff;padding:20px;border-radius:10px;text-align:center">
@@ -50,11 +87,12 @@ export default async function handler(req, res) {
             </div>
           </div>`,
         }),
-      })
+      }).catch(() => {})
     }
 
     return res.status(200).json({ ok: true })
   } catch (e) {
-    return res.status(500).json({ ok: false })
+    console.error('Leads API error:', e)
+    return createErrorResponse(res, 500, 'internal-error')
   }
 }
