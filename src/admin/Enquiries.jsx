@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { supabase } from '../lib/supabase'
 import Icon from '../components/Icon'
 
@@ -18,12 +18,52 @@ const STATUS_OPTIONS = [
   { value: 'closed', label: 'Closed' },
 ]
 
+function ConfirmDialog({ open, title, message, onConfirm, onCancel }) {
+  const dialogRef = useRef(null)
+
+  useEffect(() => {
+    if (open && dialogRef.current) {
+      dialogRef.current.focus()
+    }
+  }, [open])
+
+  if (!open) return null
+
+  return (
+    <div className="admin-modal-overlay" onClick={onCancel} role="presentation">
+      <div
+        ref={dialogRef}
+        className="admin-modal"
+        role="alertdialog"
+        aria-modal="true"
+        aria-labelledby="confirm-title"
+        aria-describedby="confirm-message"
+        tabIndex={-1}
+        onClick={(e) => e.stopPropagation()}
+      >
+        <h3 id="confirm-title">{title}</h3>
+        <p id="confirm-message">{message}</p>
+        <div className="admin-modal-actions">
+          <button className="admin-btn admin-btn-ghost" onClick={onCancel}>
+            Cancel
+          </button>
+          <button className="admin-btn admin-btn-danger" onClick={onConfirm}>
+            Delete
+          </button>
+        </div>
+      </div>
+    </div>
+  )
+}
+
 export default function EnquiriesView() {
   const [enquiries, setEnquiries] = useState([])
   const [loading, setLoading] = useState(true)
   const [filter, setFilter] = useState('all')
   const [expanded, setExpanded] = useState(null)
   const [error, setError] = useState(null)
+  const [deleteTarget, setDeleteTarget] = useState(null)
+  const [updatingStatus, setUpdatingStatus] = useState(null)
 
   useEffect(() => {
     fetchEnquiries()
@@ -40,42 +80,62 @@ export default function EnquiriesView() {
 
       if (dbError) throw dbError
       setEnquiries(data || [])
-    } catch (e) {
-      console.error('Fetch error:', e)
-      setError('Failed to load enquiries. Make sure the enquiries table exists in Supabase.')
+    } catch {
+      setError('Failed to load enquiries. Please try again.')
     } finally {
       setLoading(false)
     }
   }
 
   const updateStatus = async (id, newStatus) => {
+    setUpdatingStatus(id)
     try {
-      const { error } = await supabase
-        .from('enquiries')
-        .update({ status: newStatus })
-        .eq('id', id)
+      const { data: { session } } = await supabase.auth.getSession()
+      const token = session?.access_token
 
-      if (error) throw error
+      if (!token) {
+        setError('Session expired. Please sign in again.')
+        return
+      }
+
+      const res = await fetch('/api/admin/update-enquiry-status', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ id, status: newStatus }),
+      })
+
+      const result = await res.json()
+      if (!result.ok) throw new Error(result.reason)
+
       setEnquiries((prev) =>
         prev.map((e) => (e.id === id ? { ...e, status: newStatus } : e))
       )
-    } catch (e) {
-      console.error('Update error:', e)
+    } catch {
+      setError('Failed to update status. Please try again.')
+      setTimeout(() => setError(null), 4000)
+    } finally {
+      setUpdatingStatus(null)
     }
   }
 
-  const deleteEnquiry = async (id) => {
-    if (!confirm('Delete this enquiry?')) return
+  const deleteEnquiry = async () => {
+    if (!deleteTarget) return
     try {
       const { error } = await supabase
         .from('enquiries')
         .delete()
-        .eq('id', id)
+        .eq('id', deleteTarget)
 
       if (error) throw error
-      setEnquiries((prev) => prev.filter((e) => e.id !== id))
-    } catch (e) {
-      console.error('Delete error:', e)
+      setEnquiries((prev) => prev.filter((e) => e.id !== deleteTarget))
+    } catch {
+      setError('Failed to delete enquiry. Please try again.')
+      setTimeout(() => setError(null), 4000)
+    } finally {
+      setDeleteTarget(null)
     }
   }
 
@@ -101,6 +161,14 @@ export default function EnquiriesView() {
 
   return (
     <div className="enquiries-view">
+      <ConfirmDialog
+        open={!!deleteTarget}
+        title="Delete Enquiry"
+        message="Are you sure you want to delete this enquiry? This action cannot be undone."
+        onConfirm={deleteEnquiry}
+        onCancel={() => setDeleteTarget(null)}
+      />
+
       {error && <div className="admin-error admin-error-bar">{error}</div>}
 
       <div className="enq-stats">
@@ -160,9 +228,9 @@ export default function EnquiriesView() {
                   </div>
                   <div className="enq-card-meta">
                     <span>{enq.email}</span>
-                    <span>•</span>
+                    <span>*</span>
                     <span>{enq.service?.replace(/-/g, ' ')}</span>
-                    <span>•</span>
+                    <span>*</span>
                     <span>{new Date(enq.created_at).toLocaleDateString()}</span>
                   </div>
                 </div>
@@ -202,7 +270,7 @@ export default function EnquiriesView() {
                     </div>
                     <div className="enq-detail">
                       <label>Refund Accepted</label>
-                      <span>{enq.refund_accepted ? '✅ Yes' : '❌ No'}</span>
+                      <span>{enq.refund_accepted ? 'Yes' : 'No'}</span>
                     </div>
                     {enq.payment_ref && (
                       <div className="enq-detail">
@@ -224,20 +292,21 @@ export default function EnquiriesView() {
                         {STATUS_OPTIONS.map((s) => (
                           <button
                             key={s.value}
-                            className={`enq-status-btn ${enq.status === s.value ? 'current' : ''}`}
+                            className={`enq-status-btn ${enq.status === s.value ? 'current' : ''} ${updatingStatus === enq.id ? 'updating' : ''}`}
                             style={{
                               borderColor: STATUS_COLORS[s.value],
                               color: enq.status === s.value ? '#fff' : STATUS_COLORS[s.value],
                               background: enq.status === s.value ? STATUS_COLORS[s.value] : 'transparent',
                             }}
                             onClick={() => updateStatus(enq.id, s.value)}
+                            disabled={updatingStatus === enq.id}
                           >
                             {s.label}
                           </button>
                         ))}
                       </div>
                     </div>
-                    <button className="enq-delete-btn" onClick={() => deleteEnquiry(enq.id)}>
+                    <button className="enq-delete-btn" onClick={() => setDeleteTarget(enq.id)}>
                       <Icon name="close" size={14} /> Delete
                     </button>
                   </div>

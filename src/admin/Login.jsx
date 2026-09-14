@@ -39,7 +39,13 @@ export default function Login() {
     setLoading(true)
     setError(null)
     const { error: signInError } = await supabase.auth.signInWithPassword({ email, password })
-    if (signInError) setError(signInError.message)
+    if (signInError) {
+      if (signInError.message.includes('Invalid login credentials')) {
+        setError('Invalid email or password. Please try again.')
+      } else {
+        setError('Sign in failed. Please try again later.')
+      }
+    }
     setLoading(false)
   }
 
@@ -50,8 +56,11 @@ export default function Login() {
     setResetSent(false)
     const redirectTo = `${window.location.origin}/recovery`
     const { error: resetError } = await supabase.auth.resetPasswordForEmail(email.trim(), { redirectTo })
-    if (resetError) setError(resetError.message)
-    else setResetSent(true)
+    if (resetError) {
+      setError('Unable to send reset link. Please try again later.')
+    } else {
+      setResetSent(true)
+    }
     setLoading(false)
   }
 

@@ -1,49 +1,18 @@
-const isAllowedOrigin = (origin) => {
-  if (!origin) return false
-  try {
-    const host = new URL(origin).hostname
-    return (
-      host === 'dewale-protocols-portfolio.vercel.app' ||
-      host.endsWith('.vercel.app') ||
-      host === 'localhost' ||
-      host === '127.0.0.1'
-    )
-  } catch {
-    return false
-  }
-}
+import { rejectBlockedOrigin } from './_lib/cors.js'
+import { trim, escapeHtml } from './_lib/sanitize.js'
+import { checkRate, rateLimitResponse, getClientIp } from './_lib/rate-limit.js'
+import { isValidEmail } from './_lib/constants.js'
 
 const WINDOW_MS = 10 * 60 * 1000
 const MAX_PER_WINDOW = 4
-const rate = new Map()
-
-function checkRate(ip) {
-  const now = Date.now()
-  const rec = rate.get(ip)
-  if (!rec || now - rec.start > WINDOW_MS) {
-    rate.set(ip, { start: now, count: 1 })
-    return true
-  }
-  rec.count += 1
-  return rec.count <= MAX_PER_WINDOW
-}
-
-function trim(s, max) {
-  return String(s || '').replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F]/g, ' ').trim().slice(0, max)
-}
 
 export async function POST(req) {
   if (req.method !== 'POST') {
     return new Response('Method not allowed', { status: 405 })
   }
 
-  const origin = req.headers.get('origin')
-  if (!isAllowedOrigin(origin)) {
-    return new Response(JSON.stringify({ ok: false, reason: 'forbidden-origin' }), {
-      status: 403,
-      headers: { 'content-type': 'application/json' },
-    })
-  }
+  const blocked = rejectBlockedOrigin(req)
+  if (blocked) return blocked
 
   let payload
   try {
@@ -62,12 +31,9 @@ export async function POST(req) {
     })
   }
 
-  const ip = (req.headers.get('x-forwarded-for') || 'unknown').split(',')[0].trim()
-  if (!checkRate(ip)) {
-    return new Response(JSON.stringify({ ok: false, reason: 'rate-limited' }), {
-      status: 429,
-      headers: { 'content-type': 'application/json' },
-    })
+  const ip = getClientIp(req)
+  if (!checkRate('contact', ip, WINDOW_MS, MAX_PER_WINDOW)) {
+    return rateLimitResponse()
   }
 
   const name = trim(payload.name, 160)
@@ -75,7 +41,7 @@ export async function POST(req) {
   const message = trim(payload.message, 20000)
   const notifyEmail = trim(payload.notifyEmail, 254)
 
-  if (!name || !email || !message || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+  if (!name || !email || !message || !isValidEmail(email)) {
     return new Response(JSON.stringify({ ok: false, reason: 'invalid-input' }), {
       status: 422,
       headers: { 'content-type': 'application/json' },
@@ -91,15 +57,12 @@ export async function POST(req) {
   }
 
   const to = notifyEmail || process.env.NOTIFY_EMAIL
-  if (!to || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(to)) {
+  if (!to || !isValidEmail(to)) {
     return new Response(JSON.stringify({ ok: false, reason: 'no-recipient' }), {
       status: 501,
       headers: { 'content-type': 'application/json' },
     })
   }
-
-  const escapeHtml = (s) =>
-    s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;')
 
   const subject = `New portfolio message from ${name}`.slice(0, 150)
   const html = `
@@ -135,8 +98,7 @@ export async function POST(req) {
   })
 
   if (!res.ok) {
-    const detail = await res.text()
-    return new Response(JSON.stringify({ ok: false, reason: 'resend-error', detail: detail.slice(0, 500) }), {
+    return new Response(JSON.stringify({ ok: false, reason: 'email-send-failed' }), {
       status: 502,
       headers: { 'content-type': 'application/json' },
     })

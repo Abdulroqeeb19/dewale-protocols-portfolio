@@ -1,4 +1,6 @@
-import { verifyWebhook, markWhatsAppRead } from '../../src/lib/whatsapp.js'
+import { verifyWebhook, verifyRequestSignature, markWhatsAppRead } from '../../src/lib/whatsapp.js'
+import { BUDGET_MAP, SERVICE_LABELS, TYPE_LABELS } from '../_lib/constants.js'
+import { escapeHtml } from '../_lib/sanitize.js'
 
 const WINDOW_MS = 10 * 60 * 1000
 const MAX_PER_WINDOW = 60
@@ -84,11 +86,6 @@ const FLOW_STEPS = {
   },
 }
 
-const BUDGET_MAP = {
-  'under-500': 50000, '500-1500': 150000, '1500-5000': 400000,
-  '5000-10000': 800000, '10000-plus': 1500000, flexible: 100000,
-}
-
 function normalizePhone(phone) {
   return phone?.replace(/\D/g, '') || ''
 }
@@ -106,13 +103,36 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: 'Method not allowed' })
   }
 
+  const signature = req.headers['x-hub-signature-256']
+  let rawBody
+  try {
+    rawBody = await new Promise((resolve, reject) => {
+      const chunks = []
+      req.on('data', (chunk) => chunks.push(chunk))
+      req.on('end', () => resolve(Buffer.concat(chunks).toString('utf-8')))
+      req.on('error', reject)
+    })
+  } catch {
+    return res.status(400).json({ error: 'Failed to read body' })
+  }
+
+  if (!verifyRequestSignature(rawBody, signature)) {
+    return res.status(403).json({ error: 'Invalid signature' })
+  }
+
+  let body
+  try {
+    body = JSON.parse(rawBody)
+  } catch {
+    return res.status(400).json({ error: 'Invalid JSON' })
+  }
+
   const ip = (req.headers['x-forwarded-for'] || 'unknown').split(',')[0].trim()
   if (!checkRate(ip)) {
     return res.status(429).json({ error: 'Rate limited' })
   }
 
   try {
-    const body = req.body
     const entry = body?.entry?.[0]
     const changes = entry?.changes?.[0]
     const messages = changes?.value?.messages
@@ -232,6 +252,8 @@ async function processIncomingMessage(phone, text, messageId) {
 
 async function submitEnquiry(phone, data, supabaseAdmin) {
   try {
+    const budgetAmount = BUDGET_MAP[data.budget]?.amount || 0
+
     await supabaseAdmin.from('enquiries').insert([{
       name: data.name || '',
       email: data.email || '',
@@ -244,36 +266,31 @@ async function submitEnquiry(phone, data, supabaseAdmin) {
       paymentPreference: data.paymentPreference || 'discuss',
       refundAccepted: data.refundAccepted || false,
       leadSource: data.leadSource || '',
-      budgetAmount: BUDGET_MAP[data.budget] || 0,
+      budgetAmount,
     }])
 
     const apiKey = process.env.RESEND_API_KEY
     const notifyEmail = process.env.NOTIFY_EMAIL
     if (apiKey && notifyEmail) {
-      const SERVICE_LABELS = {
-        'ai-automation': 'AI Automation', 'ai-chatbots': 'AI Chatbots',
-        ecommerce: 'E-Commerce', fullstack: 'Full Stack', 'smart-campus': 'Smart Campus',
-        'business-systems': 'Business Systems', consulting: 'Consulting',
-      }
-      const typeLabel = data.type === 'order' ? 'New Order' : data.type === 'booking' ? 'New Booking' : 'New Enquiry'
       const serviceLabel = SERVICE_LABELS[data.service] || data.service?.replace(/-/g, ' ') || 'N/A'
+      const typeLabel = TYPE_LABELS[data.type] || 'New Enquiry'
 
       const html = `<div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;background:#f5f6f8;padding:24px;border-radius:12px">
         <div style="background:#0b0c10;color:#25d366;padding:24px;border-radius:10px;text-align:center">
-          <div style="font-size:32px;margin-bottom:8px">📱</div>
-          <strong style="font-size:20px;color:#fff">${typeLabel} via WhatsApp</strong>
+          <div style="font-size:32px;margin-bottom:8px">&#128241;</div>
+          <strong style="font-size:20px;color:#fff">${escapeHtml(typeLabel)} via WhatsApp</strong>
           <p style="margin:6px 0 0;font-size:13px;color:#9aa3b2">A client just hired you through WhatsApp!</p>
         </div>
         <div style="background:#fff;padding:24px;border-radius:10px;margin-top:12px;color:#111">
           <table style="width:100%;border-collapse:collapse;font-size:14px">
-            <tr><td style="padding:8px 0;font-weight:700;width:120px">Name</td><td>${(data.name || 'Unknown').replace(/</g,'&lt;')}</td></tr>
-            <tr><td style="padding:8px 0;font-weight:700">Phone</td><td>${phone}</td></tr>
-            <tr><td style="padding:8px 0;font-weight:700">Email</td><td>${(data.email || 'N/A').replace(/</g,'&lt;')}</td></tr>
-            <tr><td style="padding:8px 0;font-weight:700">Service</td><td>${serviceLabel}</td></tr>
-            <tr><td style="padding:8px 0;font-weight:700">Budget</td><td>${(data.budget || 'N/A').replace(/-/g,' ')}</td></tr>
-            <tr><td style="padding:8px 0;font-weight:700">Location</td><td>${(data.location || 'N/A').replace(/</g,'&lt;')}</td></tr>
+            <tr><td style="padding:8px 0;font-weight:700;width:120px">Name</td><td>${escapeHtml(data.name || 'Unknown')}</td></tr>
+            <tr><td style="padding:8px 0;font-weight:700">Phone</td><td>${escapeHtml(phone)}</td></tr>
+            <tr><td style="padding:8px 0;font-weight:700">Email</td><td>${escapeHtml(data.email || 'N/A')}</td></tr>
+            <tr><td style="padding:8px 0;font-weight:700">Service</td><td>${escapeHtml(serviceLabel)}</td></tr>
+            <tr><td style="padding:8px 0;font-weight:700">Budget</td><td>${escapeHtml(BUDGET_MAP[data.budget]?.label || 'N/A')}</td></tr>
+            <tr><td style="padding:8px 0;font-weight:700">Location</td><td>${escapeHtml(data.location || 'N/A')}</td></tr>
           </table>
-          ${data.description ? `<div style="margin-top:14px;padding-top:14px;border-top:1px solid #eee"><strong style="font-size:12px;color:#666">DESCRIPTION</strong><p style="margin-top:6px;color:#333;line-height:1.6">${data.description.replace(/</g,'&lt;')}</p></div>` : ''}
+          ${data.description ? `<div style="margin-top:14px;padding-top:14px;border-top:1px solid #eee"><strong style="font-size:12px;color:#666">DESCRIPTION</strong><p style="margin-top:6px;color:#333;line-height:1.6">${escapeHtml(data.description)}</p></div>` : ''}
           <p style="margin-top:20px;font-size:11px;color:#999;text-align:center">Auto-notified from WhatsApp AI assistant</p>
         </div>
       </div>`
@@ -285,7 +302,7 @@ async function submitEnquiry(phone, data, supabaseAdmin) {
           from: process.env.RESEND_FROM || 'Dewale Protocols <onboarding@resend.dev>',
           to: [notifyEmail],
           replyTo: data.email || undefined,
-          subject: `📱 ${typeLabel} (WhatsApp): ${data.name || 'Unknown'} — ${serviceLabel}`.slice(0, 150),
+          subject: `${typeLabel} (WhatsApp): ${data.name || 'Unknown'} — ${serviceLabel}`.slice(0, 150),
           html,
         }),
       })

@@ -1,4 +1,4 @@
-import { useEffect, useState, lazy, Suspense } from 'react'
+import { useEffect, useState, lazy, Suspense, Component } from 'react'
 import Cursor from './components/Cursor'
 import Favicon from './components/Favicon'
 import Navbar from './components/Navbar'
@@ -22,6 +22,32 @@ import Icon from './components/Icon'
 import { AD_SLOTS } from './config/ads'
 
 const AdminApp = lazy(() => import('./admin/AdminApp'))
+
+class ErrorBoundary extends Component {
+  constructor(props) {
+    super(props)
+    this.state = { hasError: false }
+  }
+  static getDerivedStateFromError() {
+    return { hasError: true }
+  }
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div className="admin-loading">
+          <div style={{ textAlign: 'center', padding: '2rem' }}>
+            <h2>Something went wrong</h2>
+            <p style={{ color: '#9aa3b2', marginTop: '0.5rem' }}>Please refresh the page or try again later.</p>
+            <a href="#/" className="admin-btn admin-btn-ghost" style={{ marginTop: '1rem', display: 'inline-block' }}>
+              Back to site
+            </a>
+          </div>
+        </div>
+      )
+    }
+    return this.props.children
+  }
+}
 
 function useHashRoute() {
   const [hash, setHash] = useState(window.location.hash)
@@ -103,9 +129,11 @@ export default function App() {
       {recovering ? (
         <PasswordReset onDone={() => setRecovering(false)} />
       ) : isAdmin ? (
-        <Suspense fallback={<LoadingScreen />}>
-          <AdminApp />
-        </Suspense>
+        <ErrorBoundary>
+          <Suspense fallback={<LoadingScreen />}>
+            <AdminApp />
+          </Suspense>
+        </ErrorBoundary>
       ) : (
         <PublicSite />
       )}

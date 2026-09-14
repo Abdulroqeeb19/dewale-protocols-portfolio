@@ -1,6 +1,5 @@
 import { useState, useRef, useEffect, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { supabase } from '../lib/supabase'
 import Icon from './Icon'
 import '../styles/whatsapp-agent.css'
 
@@ -10,9 +9,9 @@ const FLOW = [
     type: 'bot',
     message: "Hello! Welcome to Dewale Protocols. I'm here to help you place an order, book a service, or get a quote. Let's get started!",
     options: [
-      { label: '📦 Place an Order', value: 'order' },
-      { label: '📅 Book a Service', value: 'booking' },
-      { label: '💬 General Enquiry', value: 'enquiry' },
+      { label: 'Place an Order', value: 'order' },
+      { label: 'Book a Service', value: 'booking' },
+      { label: 'General Enquiry', value: 'enquiry' },
     ],
     field: 'type',
   },
@@ -73,9 +72,9 @@ const FLOW = [
     message: 'What is your estimated budget range?',
     options: [
       { label: 'Under $500', value: 'under-500' },
-      { label: '$500 – $1,500', value: '500-1500' },
-      { label: '$1,500 – $5,000', value: '1500-5000' },
-      { label: '$5,000 – $10,000', value: '5000-10000' },
+      { label: '$500 - $1,500', value: '500-1500' },
+      { label: '$1,500 - $5,000', value: '1500-5000' },
+      { label: '$5,000 - $10,000', value: '5000-10000' },
       { label: '$10,000+', value: '10000-plus' },
       { label: 'Discuss later', value: 'flexible' },
     ],
@@ -95,9 +94,9 @@ const FLOW = [
     type: 'bot',
     message: 'To proceed, a deposit is required. Would you like to make a payment now?',
     options: [
-      { label: '💳 Pay Now (Paystack)', value: 'pay-now' },
-      { label: '📋 Invoice Later', value: 'invoice-later' },
-      { label: '💬 Discuss Payment', value: 'discuss' },
+      { label: 'Pay Now (Paystack)', value: 'pay-now' },
+      { label: 'Invoice Later', value: 'invoice-later' },
+      { label: 'Discuss Payment', value: 'discuss' },
     ],
     field: 'paymentPreference',
   },
@@ -105,16 +104,16 @@ const FLOW = [
     id: 'refund',
     type: 'bot',
     message: `**Refund Policy:**
-• Full refund within 24 hours of payment (before work begins)
-• 50% refund if cancelled within 3 days of project start
-• No refund after deliverables have been provided
-• Disputes resolved within 7 business days
-• All refunds processed via original payment method
+- Full refund within 24 hours of payment (before work begins)
+- 50% refund if cancelled within 3 days of project start
+- No refund after deliverables have been provided
+- Disputes resolved within 7 business days
+- All refunds processed via original payment method
 
 Do you accept our refund policy?`,
     options: [
-      { label: '✅ I Accept', value: 'accepted' },
-      { label: '❌ I Have Questions', value: 'questions' },
+      { label: 'I Accept', value: 'accepted' },
+      { label: 'I Have Questions', value: 'questions' },
     ],
     field: 'refundAccepted',
   },
@@ -123,27 +122,43 @@ Do you accept our refund policy?`,
     type: 'bot',
     message: 'One last thing — how did you hear about us?',
     options: [
-      { label: '🔍 Google Search', value: 'google' },
-      { label: '📱 Social Media', value: 'social-media' },
-      { label: '👥 Referral', value: 'referral' },
-      { label: '💼 LinkedIn', value: 'linkedin' },
-      { label: '🐦 Twitter/X', value: 'twitter' },
-      { label: '📦 Portfolio Site', value: 'portfolio' },
+      { label: 'Google Search', value: 'google' },
+      { label: 'Social Media', value: 'social-media' },
+      { label: 'Referral', value: 'referral' },
+      { label: 'LinkedIn', value: 'linkedin' },
+      { label: 'Twitter/X', value: 'twitter' },
+      { label: 'Portfolio Site', value: 'portfolio' },
     ],
     field: 'leadSource',
   },
 ]
 
-const PAYMENT_AMOUNTS = {
-  'under-500': 50000,
-  '500-1500': 150000,
-  '1500-5000': 400000,
-  '5000-10000': 800000,
-  '10000-plus': 1500000,
-  flexible: 100000,
+const PAYSTACK_KEY = import.meta.env.VITE_PAYSTACK_PUBLIC_KEY || ''
+
+function escapeHtml(str) {
+  return str
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;')
 }
 
-const PAYSTACK_KEY = import.meta.env.VITE_PAYSTACK_PUBLIC_KEY || ''
+function formatMessage(text) {
+  return escapeHtml(text)
+    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+    .replace(/\n/g, '<br>')
+}
+
+function safeRender(text) {
+  const parts = text.split(/(\*\*.*?\*\*)/)
+  return parts.map((part, i) => {
+    if (part.startsWith('**') && part.endsWith('**')) {
+      return <strong key={i}>{part.slice(2, -2)}</strong>
+    }
+    return <span key={i}>{part}</span>
+  })
+}
 
 export default function WhatsAppAgent() {
   const [open, setOpen] = useState(false)
@@ -170,7 +185,7 @@ export default function WhatsAppAgent() {
     if (open && messages.length === 0) {
       initConversation()
     }
-  }, [open])
+  }, [open, messages.length])
 
   const initConversation = () => {
     const first = FLOW[0]
@@ -249,11 +264,10 @@ export default function WhatsAppAgent() {
     processStep(currentStep, value)
   }
 
-  const initiatePayment = (stepIndex) => {
+  const initiatePayment = async (stepIndex) => {
     setPaymentProcessing(true)
 
     const budgetRange = formData.budget || 'flexible'
-    const amount = PAYMENT_AMOUNTS[budgetRange] || 100000
 
     if (!PAYSTACK_KEY) {
       setPaymentProcessing(false)
@@ -263,42 +277,63 @@ export default function WhatsAppAgent() {
       return
     }
 
-    const handler = window.PaystackPop?.setup({
-      key: PAYSTACK_KEY,
-      email: formData.email || 'customer@example.com',
-      amount,
-      currency: 'NGN',
-      ref: `DP-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
-      metadata: {
-        custom_fields: [
-          { display_name: 'Service', value: formData.service },
-          { display_name: 'Type', value: formData.type },
-        ],
-      },
-      callback: (response) => {
-        setPaymentProcessing(false)
-        setFormData((prev) => ({ ...prev, paymentRef: response.reference }))
-        addBotMessage(`Payment confirmed! Reference: ${response.reference}`)
+    try {
+      const res = await fetch('/api/validate-payment', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          budget: budgetRange,
+          email: formData.email || '',
+        }),
+      })
 
-        const nextStep = stepIndex + 1
-        if (nextStep >= FLOW.length) {
-          submitEnquiry(stepIndex, 'pay-now')
-        } else {
-          setCurrentStep(nextStep)
-          const next = FLOW[nextStep]
-          setTimeout(() => addBotMessage(next.message, next.options), 400)
-        }
-      },
-      onClose: () => {
+      const data = await res.json()
+      if (!data.ok) {
         setPaymentProcessing(false)
-        addBotMessage('Payment cancelled. Would you like to try again or choose a different option?', [
-          { label: '💳 Try Again', value: 'pay-now' },
-          { label: '📋 Invoice Later', value: 'invoice-later' },
-        ])
-      },
-    })
+        addBotMessage('Unable to process payment. Please try again or select "Invoice Later".')
+        return
+      }
 
-    handler?.openIframe?.()
+      const handler = window.PaystackPop?.setup({
+        key: PAYSTACK_KEY,
+        email: formData.email || 'customer@example.com',
+        amount: data.amount,
+        currency: data.currency,
+        ref: data.reference,
+        metadata: {
+          custom_fields: [
+            { display_name: 'Service', value: formData.service },
+            { display_name: 'Type', value: formData.type },
+          ],
+        },
+        callback: (response) => {
+          setPaymentProcessing(false)
+          setFormData((prev) => ({ ...prev, paymentRef: response.reference }))
+          addBotMessage(`Payment confirmed! Reference: ${response.reference}`)
+
+          const nextStep = stepIndex + 1
+          if (nextStep >= FLOW.length) {
+            submitEnquiry(stepIndex, 'pay-now')
+          } else {
+            setCurrentStep(nextStep)
+            const next = FLOW[nextStep]
+            setTimeout(() => addBotMessage(next.message, next.options), 400)
+          }
+        },
+        onClose: () => {
+          setPaymentProcessing(false)
+          addBotMessage('Payment cancelled. Would you like to try again or choose a different option?', [
+            { label: 'Try Again', value: 'pay-now' },
+            { label: 'Invoice Later', value: 'invoice-later' },
+          ])
+        },
+      })
+
+      handler?.openIframe?.()
+    } catch {
+      setPaymentProcessing(false)
+      addBotMessage('Payment verification failed. Please try again or select "Invoice Later".')
+    }
   }
 
   const submitEnquiry = async (stepIndex, lastValue) => {
@@ -308,52 +343,45 @@ export default function WhatsAppAgent() {
     addBotMessage('Submitting your enquiry... Please wait.')
 
     try {
-      const payload = {
-        name: allData.name,
-        email: allData.email,
-        phone: allData.phone,
-        type: allData.type,
-        service: allData.service,
-        description: allData.description,
-        budget: allData.budget,
-        location: allData.location,
-        paymentPreference: allData.paymentPreference,
-        paymentRef: allData.paymentRef || null,
-        refundAccepted: allData.refundAccepted === 'accepted',
-        leadSource: allData.leadSource,
-        budgetAmount: PAYMENT_AMOUNTS[allData.budget] || 0,
-      }
-
-      const { error: dbError } = await supabase
-        ?.from('enquiries')
-        .insert([payload])
-
-      if (dbError) throw dbError
-
-      fetch('/api/notify-enquiry', {
+      const res = await fetch('/api/enquiries', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...payload, source: 'web' }),
-      }).catch(() => {})
+        body: JSON.stringify({
+          name: allData.name,
+          email: allData.email,
+          phone: allData.phone,
+          type: allData.type,
+          service: allData.service,
+          description: allData.description,
+          budget: allData.budget,
+          location: allData.location,
+          paymentPreference: allData.paymentPreference,
+          paymentRef: allData.paymentRef || null,
+          refundAccepted: allData.refundAccepted === 'accepted',
+          leadSource: allData.leadSource,
+        }),
+      })
+
+      const result = await res.json()
+      if (!result.ok) throw new Error(result.reason || 'submission-failed')
 
       setComplete(true)
       addBotMessage(
-        `🎉 **Enquiry Submitted Successfully!**
+        `**Enquiry Submitted Successfully!**
 
 Thank you, **${allData.name}**! Here's a summary:
 
-📦 **Type:** ${allData.type === 'order' ? 'Order' : allData.type === 'booking' ? 'Service Booking' : 'General Enquiry'}
-🔧 **Service:** ${allData.service?.replace(/-/g, ' ')}
-💰 **Budget:** ${allData.budget?.replace(/-/g, ' ')}
-📍 **Location:** ${allData.location}
-💳 **Payment:** ${allData.paymentPreference === 'pay-now' ? 'Paid' : allData.paymentPreference === 'invoice-later' ? 'Invoice pending' : 'Discuss later'}
+**Type:** ${allData.type === 'order' ? 'Order' : allData.type === 'booking' ? 'Service Booking' : 'General Enquiry'}
+**Service:** ${allData.service?.replace(/-/g, ' ')}
+**Budget:** ${allData.budget?.replace(/-/g, ' ')}
+**Location:** ${allData.location}
+**Payment:** ${allData.paymentPreference === 'pay-now' ? 'Paid' : allData.paymentPreference === 'invoice-later' ? 'Invoice pending' : 'Discuss later'}
 
 We'll get back to you within **24 hours** at **${allData.email}**.
 
 Need immediate help? Email us at hello@dewaleprotocols.io`
       )
-    } catch (err) {
-      console.error('Submit error:', err)
+    } catch {
       addBotMessage(
         'There was an issue submitting your enquiry. Please try again or contact us directly at hello@dewaleprotocols.io'
       )
@@ -410,9 +438,9 @@ Need immediate help? Email us at hello@dewaleprotocols.io`
               </div>
               <div className="wa-header-info">
                 <h3>Dewale Protocols</h3>
-                <span className="wa-status">Online • AI Assistant</span>
+                <span className="wa-status">Online - AI Assistant</span>
               </div>
-              <button className="wa-close" onClick={() => setOpen(false)}>
+              <button className="wa-close" onClick={() => setOpen(false)} aria-label="Close chat">
                 <Icon name="close" size={20} />
               </button>
             </div>
@@ -428,11 +456,7 @@ Need immediate help? Email us at hello@dewaleprotocols.io`
                     )}
                     <div className="wa-msg-content">
                       <div className="wa-msg-bubble">
-                        <div
-                          dangerouslySetInnerHTML={{
-                            __html: formatMessage(msg.text),
-                          }}
-                        />
+                        {safeRender(msg.text)}
                       </div>
                       {msg.options && i === messages.length - 1 && !complete && (
                         <div className="wa-options">
@@ -509,10 +533,4 @@ Need immediate help? Email us at hello@dewaleprotocols.io`
       </AnimatePresence>
     </>
   )
-}
-
-function formatMessage(text) {
-  return text
-    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-    .replace(/\n/g, '<br>')
 }

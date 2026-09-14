@@ -1,60 +1,33 @@
-const isAllowedOrigin = (origin) => {
-  if (!origin) return false
-  try {
-    const host = new URL(origin).hostname
-    return (
-      host === 'dewale-protocols-portfolio.vercel.app' ||
-      host.endsWith('.vercel.app') ||
-      host === 'localhost' ||
-      host === '127.0.0.1'
-    )
-  } catch {
-    return false
-  }
-}
+import { rejectBlockedOrigin } from './_lib/cors.js'
+import { trim, escapeHtml } from './_lib/sanitize.js'
+import { checkRate, rateLimitResponse, getClientIp } from './_lib/rate-limit.js'
+import { SERVICE_LABELS, BUDGET_MAP } from './_lib/constants.js'
 
-function trim(s, max) {
-  return String(s || '').replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F]/g, ' ').trim().slice(0, max)
-}
-
-function escapeHtml(s) {
-  return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;')
-}
-
-const SERVICE_MAP = {
-  'ai-automation': 'AI Automation',
-  'ai-chatbots': 'AI Chatbots',
-  ecommerce: 'E-Commerce Systems',
-  fullstack: 'Full Stack Development',
-  'smart-campus': 'Smart Campus',
-  'business-systems': 'Business Systems',
-  consulting: 'Tech Consulting',
-}
-
-const BUDGET_MAP = {
-  'under-500': 'Under $500',
-  '500-1500': '$500 - $1,500',
-  '1500-5000': '$1,500 - $5,000',
-  '5000-10000': '$5,000 - $10,000',
-  '10000-plus': '$10,000+',
-  flexible: 'Flexible',
-}
+const WINDOW_MS = 10 * 60 * 1000
+const MAX_PER_WINDOW = 10
 
 export async function POST(req) {
   if (req.method !== 'POST') {
     return new Response('Method not allowed', { status: 405 })
   }
 
-  const origin = req.headers.get('origin')
-  if (!isAllowedOrigin(origin)) {
-    return new Response(JSON.stringify({ ok: false, reason: 'forbidden-origin' }), {
-      status: 403,
-      headers: { 'content-type': 'application/json' },
-    })
+  const blocked = rejectBlockedOrigin(req)
+  if (blocked) return blocked
+
+  const ip = getClientIp(req)
+  if (!checkRate('notify-enquiry', ip, WINDOW_MS, MAX_PER_WINDOW)) {
+    return rateLimitResponse()
   }
 
   let payload
   try {
+    const cl = Number(req.headers.get('content-length') || 0)
+    if (cl > 64 * 1024) {
+      return new Response(JSON.stringify({ ok: false, reason: 'payload-too-large' }), {
+        status: 413,
+        headers: { 'content-type': 'application/json' },
+      })
+    }
     payload = await req.json()
   } catch {
     return new Response(JSON.stringify({ ok: false, reason: 'bad-request' }), {
@@ -86,16 +59,16 @@ export async function POST(req) {
   const source = trim(payload.source, 30) || 'web'
 
   const typeLabel = type === 'order' ? 'New Order' : type === 'booking' ? 'New Booking' : 'New Enquiry'
-  const serviceLabel = SERVICE_MAP[service] || service.replace(/-/g, ' ') || 'Not specified'
-  const budgetLabel = BUDGET_MAP[budget] || budget.replace(/-/g, ' ') || 'Not specified'
+  const serviceLabel = SERVICE_LABELS[service] || service.replace(/-/g, ' ') || 'Not specified'
+  const budgetLabel = BUDGET_MAP[budget]?.label || budget.replace(/-/g, ' ') || 'Not specified'
 
-  const subject = `🎉 ${typeLabel}: ${name} — ${serviceLabel}`.slice(0, 150)
+  const subject = `${typeLabel}: ${name} — ${serviceLabel}`.slice(0, 150)
 
   const html = `
     <div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;background:#f5f6f8;padding:24px;border-radius:12px">
       <div style="background:#0b0c10;color:#25d366;padding:24px;border-radius:10px;text-align:center">
-        <div style="font-size:32px;margin-bottom:8px">🎉</div>
-        <strong style="font-size:20px;color:#fff">${typeLabel}</strong>
+        <div style="font-size:32px;margin-bottom:8px">&#127881;</div>
+        <strong style="font-size:20px;color:#fff">${escapeHtml(typeLabel)}</strong>
         <p style="margin:6px 0 0;font-size:13px;color:#9aa3b2">Someone just hired you through the AI assistant!</p>
       </div>
       <div style="background:#ffffff;padding:24px;border-radius:10px;margin-top:12px;color:#111">
@@ -141,7 +114,7 @@ export async function POST(req) {
         </div>
 
         <div style="margin-top:24px;text-align:center">
-          <a href="mailto:${escapeHtml(email)}?subject=Re: Your ${escapeHtml(serviceLabel)} enquiry&body=Hi ${escapeHtml(name)},%0A%0AThank you for reaching out! I've received your enquiry about ${escapeHtml(serviceLabel)} and would love to discuss further.%0A%0ABest regards,%0AAbdulroqeeb Olapade" style="display:inline-block;padding:14px 32px;background:#25d366;color:#fff;text-decoration:none;border-radius:8px;font-weight:700;font-size:14px">Reply to ${escapeHtml(name.split(' ')[0])}</a>
+          <a href="mailto:${escapeHtml(email)}?subject=Re: Your ${escapeHtml(serviceLabel)} enquiry&body=Hi ${escapeHtml(name.split(' ')[0])},%0A%0AThank you for reaching out! I've received your enquiry about ${escapeHtml(serviceLabel)} and would love to discuss further.%0A%0ABest regards,%0AAbdulroqeeb Olapade" style="display:inline-block;padding:14px 32px;background:#25d366;color:#fff;text-decoration:none;border-radius:8px;font-weight:700;font-size:14px">Reply to ${escapeHtml(name.split(' ')[0])}</a>
         </div>
 
         <p style="margin-top:24px;padding-top:14px;border-top:1px solid #eee;font-size:11px;color:#999;text-align:center">
@@ -168,8 +141,7 @@ export async function POST(req) {
     })
 
     if (!res.ok) {
-      const detail = await res.text()
-      console.error('Resend notification error:', detail)
+      console.error('Resend notification error:', await res.text())
     }
   } catch (e) {
     console.error('Email notification failed:', e)

@@ -1,29 +1,21 @@
-const isAllowedOrigin = (origin) => {
-  if (!origin) return false
-  try {
-    const host = new URL(origin).hostname
-    return (
-      host === 'dewale-protocols-portfolio.vercel.app' ||
-      host.endsWith('.vercel.app') ||
-      host === 'localhost' ||
-      host === '127.0.0.1'
-    )
-  } catch {
-    return false
-  }
-}
+import { rejectBlockedOrigin } from '../_lib/cors.js'
+import { trim } from '../_lib/sanitize.js'
+import { checkRate, rateLimitResponse, getClientIp } from '../_lib/rate-limit.js'
+
+const WINDOW_MS = 60 * 1000
+const MAX_PER_WINDOW = 10
 
 export async function POST(req) {
   if (req.method !== 'POST') {
     return new Response('Method not allowed', { status: 405 })
   }
 
-  const origin = req.headers.get('origin')
-  if (!isAllowedOrigin(origin)) {
-    return new Response(JSON.stringify({ ok: false, reason: 'forbidden-origin' }), {
-      status: 403,
-      headers: { 'content-type': 'application/json' },
-    })
+  const blocked = rejectBlockedOrigin(req)
+  if (blocked) return blocked
+
+  const ip = getClientIp(req)
+  if (!checkRate('whatsapp-send', ip, WINDOW_MS, MAX_PER_WINDOW)) {
+    return rateLimitResponse()
   }
 
   let payload
@@ -36,9 +28,19 @@ export async function POST(req) {
     })
   }
 
-  const { to, message, type = 'text' } = payload
+  const to = trim(payload.to, 30)
+  const message = trim(payload.message, 4000)
+
   if (!to || !message) {
     return new Response(JSON.stringify({ ok: false, reason: 'missing-fields' }), {
+      status: 422,
+      headers: { 'content-type': 'application/json' },
+    })
+  }
+
+  const phoneDigits = to.replace(/\D/g, '')
+  if (phoneDigits.length < 8) {
+    return new Response(JSON.stringify({ ok: false, reason: 'invalid-phone' }), {
       status: 422,
       headers: { 'content-type': 'application/json' },
     })
@@ -58,7 +60,7 @@ export async function POST(req) {
     const body = {
       messaging_product: 'whatsapp',
       recipient_type: 'individual',
-      to: to.replace(/\D/g, ''),
+      to: phoneDigits,
       type: 'text',
       text: { preview_url: false, body: message },
     }
@@ -74,17 +76,17 @@ export async function POST(req) {
 
     const data = await res.json()
     if (!res.ok) {
-      return new Response(JSON.stringify({ ok: false, reason: 'api-error', detail: data?.error?.message }), {
+      return new Response(JSON.stringify({ ok: false, reason: 'api-error' }), {
         status: 502,
         headers: { 'content-type': 'application/json' },
       })
     }
 
-    return new Response(JSON.stringify({ ok: true, data }), {
+    return new Response(JSON.stringify({ ok: true }), {
       status: 200,
       headers: { 'content-type': 'application/json' },
     })
-  } catch (e) {
+  } catch {
     return new Response(JSON.stringify({ ok: false, reason: 'send-failed' }), {
       status: 500,
       headers: { 'content-type': 'application/json' },
